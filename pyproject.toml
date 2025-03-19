@@ -18,4 +18,5 @@ dependencies = [
     "torchinfo>=1.8.0",
     "torchode>=1.0.0",
     "torchvision>=0.21.0",
+    "transformers>=4.49.0",
 ]

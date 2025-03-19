@@ -4,7 +4,7 @@ import numpy as np
 import torchode as to
 import matplotlib.pyplot as plt
 
-from unet import UNet
+from models.unet import UNet
 from torch import nn
 
 
@@ -14,14 +14,14 @@ class FlowMatching(nn.Module):
 
         self.sigma = sigma
         self.model = UNet(
-        in_channels=1,
-        out_channels=1,
-        base_dim=32,
-        dim_mults=[2, 4, 8, 16],
-        n_classes=10,
-        cond_channels=1,
-        time_embedding_dim=1,
-    )
+            in_channels=1,
+            out_channels=1,
+            base_dim=32,
+            dim_mults=[2, 4, 8, 16],
+            n_classes=10,
+            cond_channels=1,
+            time_embedding_dim=1,
+        )
     
     def forward(self, batch):
         # latent: [B, C, H, W]
@@ -40,12 +40,15 @@ class FlowMatching(nn.Module):
 
         return loss
     
-    def generate(self, batch_size, h=32, w=32, n_steps=10, device="cuda"):
+    def generate(self, batch_size, h=32, w=32, n_steps=2, classes=None, device="cuda"):
         noise = torch.randn(batch_size, self.model.in_channels, h, w, device=device)
         t = torch.linspace(0, 1, n_steps, device=device)
         t = t.unsqueeze(0).repeat(batch_size, 1)
 
-        classes = torch.randint(0, 10, (batch_size, ), device=device)
+        if classes is None:
+            classes = torch.randint(0, 10, (batch_size, ), device=device)
+        else:
+            classes = torch.tensor(classes).to(device)
 
         def fn(t, x):
             x = x.view(*noise.shape)

@@ -7,7 +7,7 @@ from torch import nn
 from torch.optim.lr_scheduler import OneCycleLR
 from tqdm import tqdm
 from datetime import datetime
-from fm import FlowMatching, display_generations
+from models.fm import FlowMatching, display_generations
 
 num_epochs = 80
 batch_size = 512 
